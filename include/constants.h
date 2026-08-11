@@ -6,4 +6,19 @@
 #define BLOCK_SIZE 16
 #define BLOCK_SCALE 2
 
+#define BLOCK_AIR 0
+#define BLOCK_STONE 1
+#define BLOCK_COBBLESTONE 2
+#define BLOCK_BRICKS 3
+#define BLOCK_DIRT 4
+#define BLOCK_GRASS 5
+#define BLOCK_PLANKS 6
+#define BLOCK_LOG 7
+#define BLOCK_LEAVES 8
+#define BLOCK_GLASS 9
+
+#define WORLD_HEIGHT 20
+#define WORLD_LENGTH 8
+#define WORLD_WIDTH WORLD_LENGTH
+
 #endif

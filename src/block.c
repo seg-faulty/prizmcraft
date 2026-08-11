@@ -5,7 +5,9 @@
 
 #include <assets.h>
 #include <block.h>
+#include <camera.h>
 #include <constants.h>
+#include <world.h>
 
 Block block_new(int t_x, int t_y, int f_x, int f_y, int s_x, int s_y) {
     bopti_image_t top_flat;
@@ -45,8 +47,24 @@ void block_destroy(Block block) {
     if (image_valid(block.side)) { image_free(block.side); }
 }
 
-void block_draw(Block block, int x, int y) {
-    image_add_image(x, y, block.front, screen, BLOCK_SCALE);
-    image_add_image(x+block.front->width*BLOCK_SCALE, y, block.side, screen, BLOCK_SCALE);
-    image_add_image(x, y-0.5*BLOCK_SCALE*block.top->height, block.top, screen, BLOCK_SCALE);
+void block_draw(Block block, int x, int y, int z) {
+    if (((y < WORLD_HEIGHT-1) ? world[y+1][z][x] : 0) && ((x > 0) ? world[y][z-1][x] : 0) && ((z > 0) ? world[y][z][x-1] : 0)) { return; }
+
+    int real_x = (int)(0.5f*DWIDTH + BLOCK_SIZE*BLOCK_SCALE*((float)z - (float)x - 1.0f) - camera[0]);
+    int real_y = (int)(0.5f*DHEIGHT - 0.5f*BLOCK_SIZE*BLOCK_SCALE*(2.0f*(float)y + (float)z + (float)x) - camera[1]);
+
+    if (real_x + 2*BLOCK_SIZE*BLOCK_SCALE < 0 || real_x > DWIDTH) { return; }
+    if (real_y + BLOCK_SCALE*block.front->height < 0 || real_y - BLOCK_SCALE*block.top->height > DHEIGHT) { return; }
+
+    if (((z > 0) ? !world[y][z-1][x] : 1)) {
+        dimage_scale(real_x, real_y, BLOCK_SCALE, block.front);
+    }
+
+    if (((x > 0) ? !world[y][z][x-1] : 1)) {
+        dimage_scale(real_x+block.front->width*BLOCK_SCALE, real_y, BLOCK_SCALE, block.side);
+    }
+
+    if (((y < WORLD_HEIGHT-1) ? !world[y+1][z][x] : 1)) {
+        dimage_scale(real_x, real_y-0.5*BLOCK_SCALE*block.top->height, BLOCK_SCALE, block.top);
+    }
 }

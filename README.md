@@ -9,13 +9,13 @@ WIP.
 ## Working so far
 
 - Rendering blocks
+- Flat world generation
+- Rendering world
 
 ## Planned
 
 These are features I want to add in the near future to make the game functional.
 
-- Flat world generation
-- Rendering world
 - Placing and destroying blocks
 - Camera movement
 - Switching block using the number keys

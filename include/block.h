@@ -11,6 +11,6 @@ typedef struct {
 
 Block block_new(int, int, int, int, int, int);
 void block_destroy(Block);
-void block_draw(Block, int, int);
+void block_draw(Block, int, int, int);
 
 #endif

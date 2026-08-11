@@ -11,6 +11,8 @@ include(Fxconv)
 find_package(Gint 2.9 REQUIRED)
 
 set(SOURCES
+  src/camera.c
+  src/world.c
   src/block.c
   src/prizm_maths.c
   src/gint-extras/image.c
