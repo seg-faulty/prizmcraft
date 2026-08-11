@@ -1,0 +1,9 @@
+example.png:
+  type: bopti-image
+  name: img_example
+
+textures.png:
+  type: bopti-image
+  name: img_textures
+  profile: rgb565a
+  
