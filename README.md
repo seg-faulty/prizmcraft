@@ -11,16 +11,16 @@ WIP.
 - Rendering blocks
 - Flat world generation
 - Rendering world
+- Camera movement
+- Title screen
 
 ## Planned
 
 These are features I want to add in the near future to make the game functional.
 
 - Placing and destroying blocks
-- Camera movement
 - Switching block using the number keys
 - Save file
-- Title screen
 - Chunk loading
 - Inventory
 

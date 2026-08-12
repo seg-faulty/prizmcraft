@@ -1,8 +1,11 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-extern float camera[2];
+#include <stdbool.h>
 
-void camera_move(float, float);
+extern float camera[2];
+extern bool camera_controls[4];
+
+void camera_update();
 
 #endif

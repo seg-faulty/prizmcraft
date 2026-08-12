@@ -13,14 +13,17 @@
 #include <block.h>
 #include <camera.h>
 #include <constants.h>
+#include <game.h>
+#include <menu.h>
 #include <prizm_maths.h>
 #include <world.h>
 
 int frames_count = 0;
 int current_fps = 0;
 int next_fps = 0;
-
 uint32_t last_second = 0;
+
+uint8_t scene = SCENE_TITLE;
 
 Block stone;
 Block cobblestone;
@@ -28,39 +31,75 @@ Block bricks;
 Block dirt;
 Block grass;
 
-float camera_translation[2] = { 0, 0 };
+bopti_image_t bg;
+bopti_image_t button;
+bopti_image_t *title;
+
+Menu title_menu;
+
 int handle_input() {
 	key_event_t event = pollevent();
-	if (event.type == KEYEV_DOWN) {
-		switch (event.key) {
-			case KEY_LEFT:
-				camera_translation[0] = (float)-(2*BLOCK_SCALE*BLOCK_SIZE)/(float)current_fps;
-				break;
-			case KEY_RIGHT:
-				camera_translation[0] = (float)(2*BLOCK_SCALE*BLOCK_SIZE)/(float)current_fps;
-				break;
-			case KEY_UP:
-				camera_translation[1] = (float)-(2*BLOCK_SCALE*BLOCK_SIZE)/(float)current_fps;
-				break;
-			case KEY_DOWN:
-				camera_translation[1] = (float)(2*BLOCK_SCALE*BLOCK_SIZE)/(float)current_fps;
-				break;
-			case KEY_MENU: {
-				return 1;
+	switch (scene) {
+		case SCENE_TITLE:
+			if (event.type == KEYEV_DOWN) {
+				switch (event.key) {
+					case KEY_UP:
+						menu_up(&title_menu);
+						break;
+					case KEY_DOWN:
+						menu_down(&title_menu);
+						break;
+					case KEY_EXE:
+						if (title_menu.selected == 0) { scene = SCENE_GAME; }
+						break;
+					case KEY_MENU: {
+						return 1;
+					}
+				}
 			}
-		}
-	} else if (event.type == KEYEV_UP) {
-		switch (event.key) {
-			case KEY_LEFT:
-			case KEY_RIGHT:
-				camera_translation[0] = 0;
-				break;
-			case KEY_UP:
-			case KEY_DOWN:
-				camera_translation[1] = 0;
-				break;
-		}
+			break;
+		case SCENE_GAME:
+			if (event.type == KEYEV_DOWN) {
+				switch (event.key) {
+					case KEY_LEFT:
+						camera_controls[0] = true;
+						camera_controls[1] = false;
+						break;
+					case KEY_RIGHT:
+						camera_controls[0] = false;
+						camera_controls[1] = true;
+						break;
+					case KEY_UP:
+						camera_controls[2] = true;
+						camera_controls[3] = false;
+						break;
+					case KEY_DOWN:
+						camera_controls[2] = false;
+						camera_controls[3] = true;
+						break;
+					case KEY_MENU: {
+						return 1;
+					}
+				}
+			} else if (event.type == KEYEV_UP) {
+				switch (event.key) {
+					case KEY_LEFT:
+						camera_controls[0] = false;
+						break;
+					case KEY_RIGHT:
+						camera_controls[1] = false;
+						break;
+					case KEY_UP:
+						camera_controls[2] = false;
+						break;
+					case KEY_DOWN:
+						camera_controls[3] = false;
+						break;
+				}
+			}
+			break;
 	}
+
 
 	return 0;
 }
@@ -68,7 +107,21 @@ int handle_input() {
 void draw() {
 	dclear(0x6f7e);
 
-	world_draw();
+	switch (scene) {
+		case SCENE_TITLE: 
+			for (int y = 0; y < DHEIGHT; y += 64) {
+				for (int x = 0; x < DWIDTH; x += 64) {
+					dimage_scale(x, y, 2, &bg);
+				}
+			}
+			dimage_scale(0.5*(DWIDTH - 2*title->width), 5, 2, title);
+			menu_draw(&title_menu);
+			break;
+		case SCENE_GAME:
+			world_draw();
+		
+			break;
+	}
 
 	dprint(10, 10, C_WHITE, "FPS: %d", current_fps);
 
@@ -76,7 +129,7 @@ void draw() {
 }
 
 void update() {
-	camera_move(camera_translation[0], camera_translation[1]);
+	camera_update();
 }
 
 int main(void)
@@ -85,21 +138,19 @@ int main(void)
 	__printf_enable_fp();
 	clock_set_speed(CLOCK_SPEED_F4);
 
-	// bopti_image_t *bg = image_alloc(DWIDTH, DHEIGHT, IMAGE_RGB565A);
+	image_sub(&img_textures, 96, 48, 32, 32, &bg);
 
-	// for (int y = 0; y < DHEIGHT; y += 64) {
-	// 	for (int x = 0; x < DWIDTH; x += 64) {
-	// 		image_add_subimage(x, y, &img_textures, 96, 48, 32, 32, bg, 2);
-	// 	}
-	// }
-
-	// bopti_image_t *title = image_alloc(133, 18, IMAGE_RGB565A);
-	// image_fill(title, 1);
-	// image_add_subimage(0, 0, &img_textures, 0, 48, 64, 18, title, 1);
-	// image_add_subimage(64, 0, &img_textures, 0, 66, 69, 18, title, 1);
-
-	// screen = image_alloc(DWIDTH, DHEIGHT, IMAGE_RGB565A);
+	title = image_alloc(133, 18, IMAGE_RGB565A);
+	image_fill(title, 1);
+	image_add_subimage(0, 0, &img_textures, 0, 48, 64, 18, title, 1);
+	image_add_subimage(64, 0, &img_textures, 0, 66, 69, 18, title, 1);
 	
+	image_sub(&img_textures, 0, 88, 100, 40, &button);
+
+	title_menu = menu_create(0.5*DWIDTH, 0.5*DHEIGHT - 0.75*(button.height + 2), 1.5);
+	menu_add_entry(&title_menu, "Play");
+	menu_add_entry(&title_menu, "Reset");
+
 	stone = block_new(0, 0, 0, 0, 0, 0);
 	cobblestone = block_new(16, 0, 16, 0, 16, 0);
 	bricks = block_new(32, 0, 32, 0, 32, 0);

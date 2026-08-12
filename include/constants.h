@@ -3,6 +3,7 @@
 
 #define FPS 30
 #define FRAME_TARGET_TIME 1000.0f / FPS
+
 #define BLOCK_SIZE 16
 #define BLOCK_SCALE 2
 
@@ -20,5 +21,8 @@
 #define WORLD_HEIGHT 20
 #define WORLD_LENGTH 8
 #define WORLD_WIDTH WORLD_LENGTH
+
+#define SCENE_TITLE 0
+#define SCENE_GAME 1
 
 #endif

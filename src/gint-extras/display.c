@@ -19,4 +19,3 @@ void dsubimage_scale(int x, int y, const bopti_image_t *image, int left, int top
 	image_sub(image, left, top, width, height, &sub_image);
 	dimage_scale(x, y, scale, &sub_image);
 }
-
