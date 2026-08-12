@@ -5,6 +5,7 @@
 
 #include <prizm_maths.h>
 
+void image_sub_scale(const bopti_image_t *src, int x, int y, int width, int height, int scale, bopti_image_t *dst);
 void image_add_subimage(int, int, const bopti_image_t*, int, int, int, int, bopti_image_t*, int);
 void image_add_image(int, int, const bopti_image_t*, bopti_image_t*, int);
 

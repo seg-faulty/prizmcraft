@@ -4,6 +4,19 @@
 
 typedef struct image_linear_map image_linear_map;
 
+void image_sub_scale(const bopti_image_t *src, int x, int y, int width, int height, int scale, bopti_image_t *dst) {
+	if (scale == 1) {
+		image_sub(src, x, y, width, height, dst);
+	}
+
+	bopti_image_t sub_image;
+	image_sub(src, x, y, width, height, &sub_image);
+	
+	image_linear_map map;
+	image_scale(&sub_image, scale*65536, scale*65536, &map);
+	dst = image_linear_alloc(&sub_image, &map);
+}
+
 void image_add_subimage(int x, int y, const bopti_image_t *from, int left, int top, int width, int height, bopti_image_t *to, int scale) {
 	bopti_image_t sub_image;
 	image_sub(from, left, top, width, height, &sub_image);
