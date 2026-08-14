@@ -9,10 +9,13 @@
 
 #include <fxlibc/printf.h>
 
+#include <stdbool.h>
+
 #include <assets.h>
 #include <block.h>
 #include <camera.h>
 #include <constants.h>
+#include <cursor.h>
 #include <game.h>
 #include <menu.h>
 #include <prizm_maths.h>
@@ -36,6 +39,8 @@ bopti_image_t button;
 bopti_image_t *title;
 
 Menu title_menu;
+
+bool mode = false; // False for cursor, true for camera
 
 int handle_input() {
 	key_event_t event = pollevent();
@@ -61,21 +66,56 @@ int handle_input() {
 		case SCENE_GAME:
 			if (event.type == KEYEV_DOWN) {
 				switch (event.key) {
+					case KEY_SHIFT:
+						if (mode) {
+							camera_controls[0] = false;
+							camera_controls[1] = false;
+							camera_controls[2] = false;
+							camera_controls[3] = false;
+						}
+						mode = !mode;
+						break;
 					case KEY_LEFT:
-						camera_controls[0] = true;
-						camera_controls[1] = false;
+						if (mode) {
+							camera_controls[0] = true;
+							camera_controls[1] = false;
+						} else {
+							cursor_move(1, 0, 0);
+						}
 						break;
 					case KEY_RIGHT:
-						camera_controls[0] = false;
-						camera_controls[1] = true;
+						if (mode) {
+							camera_controls[0] = false;
+							camera_controls[1] = true;
+						} else {
+							cursor_move(-1, 0, 0);
+						}
 						break;
 					case KEY_UP:
-						camera_controls[2] = true;
-						camera_controls[3] = false;
+						if (mode) {
+							camera_controls[2] = true;
+							camera_controls[3] = false;
+						} else {
+							cursor_move(0, 0, 1);
+						}
 						break;
 					case KEY_DOWN:
-						camera_controls[2] = false;
-						camera_controls[3] = true;
+						if (mode) {
+							camera_controls[2] = false;
+							camera_controls[3] = true;
+						} else {
+							cursor_move(0, 0, -1);
+						}
+						break;
+					case KEY_F5:
+						if (!mode) {
+							cursor_move(0, -1, 0);
+						}
+						break;
+					case KEY_F6:
+						if (!mode) {
+							cursor_move(0, 1, 0);
+						}
 						break;
 					case KEY_MENU: {
 						return 1;
@@ -158,7 +198,8 @@ int main(void)
 	grass = block_new(80, 0, 64, 0, 64, 0);
 
 	world_generate();
-
+	cursor_init();
+	
 	for (;;) {
 		if (handle_input() == 1) { break; }
 		update();

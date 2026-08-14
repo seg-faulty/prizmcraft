@@ -16,6 +16,7 @@ set(SOURCES
   src/camera.c
   src/world.c
   src/block.c
+  src/cursor.c
   src/prizm_maths.c
   src/gint-extras/image.c
   src/gint-extras/display.c

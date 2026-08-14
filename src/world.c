@@ -1,4 +1,5 @@
 #include <camera.h>
+#include <cursor.h>
 #include <world.h>
 
 uint8_t world[WORLD_HEIGHT][WORLD_LENGTH][WORLD_WIDTH];
@@ -26,7 +27,8 @@ void world_draw() {
         for (int8_t z = WORLD_WIDTH-1; z >= 0; z--) {
             for (int8_t x = WORLD_LENGTH-1; x >= 0; x--) {
                 uint8_t block = world[y][x][z];
-                if (block == BLOCK_AIR) { continue; }
+                bool is_cursor = cursor.x == x && cursor.y == y && cursor.z == z;
+                if (block == BLOCK_AIR && !is_cursor) { continue; }
 
                 switch (block) {
                     case BLOCK_STONE:
@@ -41,6 +43,10 @@ void world_draw() {
                     case BLOCK_GRASS:
                         block_draw(grass, x, y, z);
                         break;
+                }
+
+                if (is_cursor) {
+                    cursor_draw();
                 }
             }
         }
