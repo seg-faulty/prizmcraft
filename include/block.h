@@ -9,9 +9,9 @@ typedef struct {
     bopti_image_t *side;
 } Block;
 
-Block block_new(int, int, int, int, int, int);
-void block_destroy(Block);
-void block_draw(Block, int, int, int);
+Block block_new(int t_x, int t_y, int f_x, int f_y, int s_x, int s_y);
+void block_destroy(Block block);
+void block_draw(Block block, int x, int y, int z);
 
 void block_draw_selected(Block block);
 

@@ -12,6 +12,6 @@ static const mat3x3 block_transformation_matrix = {
 
 int abs(int);
 
-void transform_point(const mat3x3, mat3x1, mat3x1);
+void transform_point(const mat3x3 trans, mat3x1 point, mat3x1 result);
 
 #endif

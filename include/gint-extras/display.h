@@ -3,7 +3,7 @@
 
 #include <gint/display.h>
 
-void dimage_scale(int, int, float, const bopti_image_t*);
-void dsubimage_scale(int, int, const bopti_image_t*, int, int, int, int, float);
+void dimage_scale(int x, int y, float scale, const bopti_image_t *image);
+void dsubimage_scale(int x, int y, const bopti_image_t *image, int left, int top, int width, int height, float scale);
 
 #endif
