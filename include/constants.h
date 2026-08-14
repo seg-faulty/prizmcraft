@@ -5,7 +5,7 @@
 #define FRAME_TARGET_TIME 1000.0f / FPS
 
 #define BLOCK_SIZE 16
-#define BLOCK_SCALE 2
+#define BLOCK_SCALE 1.5
 
 #define BLOCK_AIR 0
 #define BLOCK_STONE 1

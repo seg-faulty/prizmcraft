@@ -16,4 +16,7 @@ void cursor_init();
 void cursor_draw();
 void cursor_move(int dx, int dy, int dz);
 
+void cursor_place_block(uint8_t block);
+void cursor_destroy_block();
+
 #endif

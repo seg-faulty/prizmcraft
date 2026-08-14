@@ -1,5 +1,6 @@
 #include <constants.h>
 #include <cursor.h>
+#include <world.h>
 
 Cursor cursor;
 
@@ -29,4 +30,12 @@ void cursor_move(int dx, int dy, int dz) {
     else if (cursor.z >= WORLD_WIDTH) { cursor.z = WORLD_WIDTH-1; }
 
     // TODO: Make sure the cursor is connected to a block
+}
+
+void cursor_place_block(uint8_t block) {
+    world[cursor.y][cursor.z][cursor.x] = block;
+}
+
+void cursor_destroy_block() {
+    cursor_place_block(BLOCK_AIR);
 }

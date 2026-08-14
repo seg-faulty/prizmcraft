@@ -113,6 +113,16 @@ int handle_input() {
 							cursor_move(0, 0, -1);
 						}
 						break;
+					case KEY_F1:
+						if (!mode) {
+							cursor_destroy_block();
+						}
+						break;
+					case KEY_F2:
+						if (!mode) {
+							cursor_place_block(selected_block);
+						}
+						break;
 					case KEY_F5:
 						if (!mode) {
 							cursor_move(0, -1, 0);

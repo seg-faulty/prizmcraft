@@ -24,10 +24,10 @@ void world_generate() {
 }
 
 void world_draw() {
-    for (int8_t y = 0; y < WORLD_HEIGHT; y++) {
-        for (int8_t z = WORLD_WIDTH-1; z >= 0; z--) {
-            for (int8_t x = WORLD_LENGTH-1; x >= 0; x--) {
-                uint8_t block = world[y][x][z];
+    for (int16_t y = 0; y < WORLD_HEIGHT; y++) {
+        for (int16_t z = WORLD_WIDTH-1; z >= 0; z--) {
+            for (int16_t x = WORLD_LENGTH-1; x >= 0; x--) {
+                uint8_t block = world[y][z][x];
                 bool is_cursor = (mode) ? false : (cursor.x == x && cursor.y == y && cursor.z == z);
                 if (block == BLOCK_AIR && !is_cursor) { continue; }
 
@@ -38,11 +38,26 @@ void world_draw() {
                     case BLOCK_COBBLESTONE:
                         block_draw(cobblestone, x, y, z);
                         break;
+                    case BLOCK_BRICKS:
+                        block_draw(bricks, x, y, z);
+                        break;
                     case BLOCK_DIRT:
                         block_draw(dirt, x, y, z);
                         break;
                     case BLOCK_GRASS:
                         block_draw(grass, x, y, z);
+                        break;
+                    case BLOCK_PLANKS:
+                        block_draw(planks, x, y, z);
+                        break;
+                    case BLOCK_LOG:
+                        block_draw(log, x, y, z);
+                        break;
+                    case BLOCK_LEAVES:
+                        block_draw(leaves, x, y, z);
+                        break;
+                    case BLOCK_GLASS:
+                        block_draw(glass, x, y, z);
                         break;
                 }
 

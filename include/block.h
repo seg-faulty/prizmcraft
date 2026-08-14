@@ -15,4 +15,6 @@ void block_draw(Block block, int x, int y, int z);
 
 void block_draw_selected(Block block);
 
+bool block_is_transparent(int block);
+
 #endif

@@ -13,13 +13,13 @@ WIP.
 - Rendering world
 - Camera movement
 - Title screen
+- Placing and destroying blocks
+- Switching block using the number keys
 
 ## Planned
 
 These are features I want to add in the near future to make the game functional.
 
-- Placing and destroying blocks
-- Switching block using the number keys
 - Save file
 - Chunk loading
 - Inventory
