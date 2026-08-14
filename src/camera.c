@@ -2,7 +2,7 @@
 #include <constants.h>
 #include <game.h>
 
-float camera[2] = { 0, 50 };
+float camera[2] = { 0, 64 };
 bool camera_controls[4] = { false, false, false, false };
 
 void camera_update() {
@@ -13,8 +13,8 @@ void camera_update() {
     }
 
     if (camera_controls[2]) {
-        camera[1] -= (float)(2*BLOCK_SCALE*BLOCK_SIZE)/(float)current_fps;
-    } else if (camera_controls[3]) {
         camera[1] += (float)(2*BLOCK_SCALE*BLOCK_SIZE)/(float)current_fps;
+    } else if (camera_controls[3]) {
+        camera[1] -= (float)(2*BLOCK_SCALE*BLOCK_SIZE)/(float)current_fps;
     }
 }

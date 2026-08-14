@@ -51,7 +51,7 @@ void block_draw(Block block, int x, int y, int z) {
     if (((y < WORLD_HEIGHT-1) ? world[y+1][z][x] : 0) && ((x > 0) ? world[y][z-1][x] : 0) && ((z > 0) ? world[y][z][x-1] : 0)) { return; }
 
     int real_x = (int)(0.5f*DWIDTH + BLOCK_SIZE*BLOCK_SCALE*((float)z - (float)x - 1.0f) - camera[0]);
-    int real_y = (int)(0.5f*DHEIGHT - 0.5f*BLOCK_SIZE*BLOCK_SCALE*(2.0f*(float)y + (float)z + (float)x) - camera[1]);
+    int real_y = (int)(0.5f*DHEIGHT - 0.5f*BLOCK_SIZE*BLOCK_SCALE*(2.0f*(float)y + (float)z + (float)x) + camera[1]);
 
     if (real_x + 2*BLOCK_SIZE*BLOCK_SCALE < 0 || real_x > DWIDTH) { return; }
     if (real_y + BLOCK_SCALE*block.front->height < 0 || real_y - BLOCK_SCALE*block.top->height > DHEIGHT) { return; }
