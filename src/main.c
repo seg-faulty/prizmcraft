@@ -33,6 +33,10 @@ Block cobblestone;
 Block bricks;
 Block dirt;
 Block grass;
+Block planks;
+Block log;
+Block leaves;
+Block glass;
 
 bopti_image_t bg;
 bopti_image_t button;
@@ -41,6 +45,8 @@ bopti_image_t *title;
 Menu title_menu;
 
 bool mode = false; // False for cursor, true for camera
+
+uint8_t selected_block = BLOCK_STONE;
 
 int handle_input() {
 	key_event_t event = pollevent();
@@ -117,6 +123,33 @@ int handle_input() {
 							cursor_move(0, 1, 0);
 						}
 						break;
+					case KEY_1:
+						selected_block = BLOCK_STONE;
+						break;
+					case KEY_2:
+						selected_block = BLOCK_COBBLESTONE;
+						break;
+					case KEY_3:
+						selected_block = BLOCK_BRICKS;
+						break;
+					case KEY_4:
+						selected_block = BLOCK_DIRT;
+						break;
+					case KEY_5:
+						selected_block = BLOCK_GRASS;
+						break;
+					case KEY_6:
+						selected_block = BLOCK_PLANKS;
+						break;
+					case KEY_7:
+						selected_block = BLOCK_LOG;
+						break;
+					case KEY_8:
+						selected_block = BLOCK_LEAVES;
+						break;
+					case KEY_9:
+						selected_block = BLOCK_GLASS;
+						break;
 					case KEY_MENU: {
 						return 1;
 					}
@@ -160,6 +193,35 @@ void draw() {
 		case SCENE_GAME:
 			world_draw();
 		
+			switch (selected_block) {
+				case BLOCK_STONE:
+					block_draw_selected(stone);
+					break;
+				case BLOCK_COBBLESTONE:
+					block_draw_selected(cobblestone);
+					break;
+				case BLOCK_BRICKS:
+					block_draw_selected(bricks);
+					break;
+				case BLOCK_DIRT:
+					block_draw_selected(dirt);
+					break;
+				case BLOCK_GRASS:
+					block_draw_selected(grass);
+					break;
+				case BLOCK_PLANKS:
+					block_draw_selected(planks);
+					break;
+				case BLOCK_LOG:
+					block_draw_selected(log);
+					break;
+				case BLOCK_LEAVES:
+					block_draw_selected(leaves);
+					break;
+				case BLOCK_GLASS:
+					block_draw_selected(glass);
+					break;										
+			}
 			break;
 	}
 
@@ -196,6 +258,10 @@ int main(void)
 	bricks = block_new(32, 0, 32, 0, 32, 0);
 	dirt = block_new(48, 0, 48, 0, 48, 0);
 	grass = block_new(80, 0, 64, 0, 64, 0);
+	planks = block_new(96, 0, 96, 0, 96, 0);
+	log = block_new(0, 16, 112, 0, 112, 0);
+	leaves = block_new(16, 16, 16, 16, 16, 16);
+	glass = block_new(32, 16, 32, 16, 32, 16);
 
 	world_generate();
 	cursor_init();

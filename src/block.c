@@ -68,3 +68,12 @@ void block_draw(Block block, int x, int y, int z) {
         dimage_scale(real_x, real_y-0.5*BLOCK_SCALE*block.top->height, BLOCK_SCALE, block.top);
     }
 }
+
+void block_draw_selected(Block block) {
+    int start_x = DWIDTH - block.front->width - block.side->width - 3;
+    int start_y = 11;
+    
+    dimage_scale(start_x, start_y, 1.0f, block.front);
+    dimage_scale(start_x+block.front->width, start_y, 1.0f, block.side);
+    dimage_scale(start_x, start_y-0.5*block.top->height, 1.0f, block.top);
+}
