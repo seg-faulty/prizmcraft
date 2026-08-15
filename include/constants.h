@@ -24,5 +24,8 @@
 
 #define SCENE_TITLE 0
 #define SCENE_GAME 1
+#define SCENE_TUTORIAL 2
+#define SCENE_CREDITS 3
+#define SCENE_PAUSED 4
 
 #endif

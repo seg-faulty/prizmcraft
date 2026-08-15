@@ -29,7 +29,7 @@ void menu_draw(Menu *menu) {
             dsubimage_scale(menu->x - 0.5*button.width*menu->scale, menu->y + i*0.5*button.height*menu->scale + 2.0f*menu->scale*i, &button, 0, 0, 100, 20, menu->scale);
         }
         
-        dtext_opt(menu->x, menu->y + 0.5*button.height*menu->scale*(i + 0.5) + 2.0f*menu->scale*i, C_WHITE, C_NONE, DTEXT_CENTER, DTEXT_MIDDLE, vector_at(&(menu->entries), i));
+        dtext_opt(menu->x, menu->y + 0.5*button.height*menu->scale*(i + 0.5) + 2.0f*menu->scale*i, (i == menu->selected) ? 0xef4d : C_WHITE, C_NONE, DTEXT_CENTER, DTEXT_MIDDLE, vector_at(&(menu->entries), i));
     }
 }
 

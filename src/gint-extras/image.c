@@ -80,3 +80,54 @@ bopti_image_t * image_transform(const bopti_image_t *src, const mat3x3 trans) {
 
 	return dst;
 }
+
+typedef struct {
+	uint8_t r;
+	uint8_t g;
+	uint8_t b;
+} Color_RGB;
+
+Color_RGB hex_to_rgb(color_t c) {
+    Color_RGB rgb;
+
+	rgb.r = c >> 11;
+	rgb.g = (c - (rgb.r << 11)) >> 5;
+	rgb.b = c - (rgb.r << 11) - (rgb.g << 5);
+
+    return rgb;
+}
+
+color_t blend_colors(color_t c1, color_t c2, float opacity) {
+	Color_RGB rgb1 = hex_to_rgb(c1);
+	Color_RGB rgb2 = hex_to_rgb(c2);
+
+	int diff_r = rgb2.r - rgb1.r;
+	int diff_g = rgb2.g - rgb1.g;
+	int diff_b = rgb2.b - rgb1.b;
+
+	float r = rgb1.r + opacity*(float)diff_r;
+	float g = rgb1.g + opacity*(float)diff_g;
+	float b = rgb1.b + opacity*(float)diff_b;
+
+	return ((int)r << 11) + ((int)g << 5) + (int)b;
+}
+
+color_t last_color;
+color_t blended;
+bool last_color_set = false;
+
+void image_fill_opacity(bopti_image_t *img, int value, float opacity) {
+	for (int y = 0; y < img->height; y++) {
+		for (int x = 0; x < img->width; x++) {
+			color_t pixel = image_get_pixel(img, x, y);
+			if (pixel != last_color || !last_color_set) {
+				blended = blend_colors(pixel, value, opacity);
+				last_color = pixel;
+				last_color_set = true;
+			}
+
+			image_set_pixel(img, x, y, blended);
+		}
+	}
+	last_color_set = false;
+}

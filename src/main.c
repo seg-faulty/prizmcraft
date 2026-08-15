@@ -1,6 +1,7 @@
 #include <gint/display.h>
 #include <gint/keyboard.h>
 #include <gint/gint.h>
+#include <gint/kmalloc.h>
 #include <gint/rtc.h>
 #include <gint/clock.h>
 
@@ -26,6 +27,8 @@ int current_fps = 0;
 int next_fps = 0;
 uint32_t last_second = 0;
 
+bool about_to_pause = false;
+
 uint8_t scene = SCENE_TITLE;
 
 Block stone;
@@ -41,8 +44,10 @@ Block glass;
 bopti_image_t bg;
 bopti_image_t button;
 bopti_image_t *title;
+bopti_image_t *paused_bg;
 
 Menu title_menu;
+Menu pause_menu;
 
 bool mode = false; // False for cursor, true for camera
 
@@ -160,6 +165,12 @@ int handle_input() {
 					case KEY_9:
 						selected_block = BLOCK_GLASS;
 						break;
+					case KEY_EXIT:		
+						pause_menu = menu_create(0.5*DWIDTH, 0.5*DHEIGHT - 0.75*(button.height + 2), 1.5);
+						menu_add_entry(&pause_menu, "Back to game");
+						menu_add_entry(&pause_menu, "Quit to title");
+						about_to_pause = true;
+						break;
 					case KEY_MENU: {
 						return 1;
 					}
@@ -181,6 +192,28 @@ int handle_input() {
 				}
 			}
 			break;
+		case SCENE_PAUSED:
+			if (event.type == KEYEV_DOWN) {
+				switch (event.key) {
+					case KEY_UP:
+						menu_up(&pause_menu);
+						break;
+					case KEY_DOWN:
+						menu_down(&pause_menu);
+						break;
+					case KEY_EXE:
+						if (pause_menu.selected) {
+							scene = SCENE_TITLE;
+						} else {
+							scene = SCENE_GAME;
+						}
+						menu_destroy(&pause_menu);
+						image_free(paused_bg);
+						break;
+					case KEY_MENU: { return 1; }
+				}
+			}
+			break;
 	}
 
 
@@ -191,7 +224,7 @@ void draw() {
 	dclear(0x6f7e);
 
 	switch (scene) {
-		case SCENE_TITLE: 
+		case SCENE_TITLE: {
 			for (int y = 0; y < DHEIGHT; y += 64) {
 				for (int x = 0; x < DWIDTH; x += 64) {
 					dimage_scale(x, y, 2, &bg);
@@ -199,8 +232,10 @@ void draw() {
 			}
 			dimage_scale(0.5*(DWIDTH - 2*title->width), 5, 2, title);
 			menu_draw(&title_menu);
+
 			break;
-		case SCENE_GAME:
+		}
+		case SCENE_GAME: {
 			world_draw();
 		
 			switch (selected_block) {
@@ -233,6 +268,23 @@ void draw() {
 					break;										
 			}
 			break;
+		}
+		case SCENE_PAUSED: {
+			dimage(0, 0, paused_bg);
+			menu_draw(&pause_menu);
+
+			break;
+		}
+	}
+
+
+	if (about_to_pause) {
+		bopti_image_t *temp = image_create_vram();
+		paused_bg = image_copy_alloc(temp, IMAGE_RGB565A);
+		image_fill_opacity(paused_bg, 0x10a2, 0.5f);
+		image_free(temp);
+		about_to_pause = false;
+		scene = SCENE_PAUSED;
 	}
 
 	dprint(10, 10, C_WHITE, "FPS: %d", current_fps);
@@ -259,9 +311,11 @@ int main(void)
 	
 	image_sub(&img_textures, 0, 88, 100, 40, &button);
 
-	title_menu = menu_create(0.5*DWIDTH, 0.5*DHEIGHT - 0.75*(button.height + 2), 1.5);
+	title_menu = menu_create(0.5*DWIDTH, 0.5*DHEIGHT - 1.2*(button.height + 2), 1.5);
 	menu_add_entry(&title_menu, "Play");
 	menu_add_entry(&title_menu, "Reset");
+	menu_add_entry(&title_menu, "Tutorial");
+	menu_add_entry(&title_menu, "Credits");
 
 	stone = block_new(0, 0, 0, 0, 0, 0);
 	cobblestone = block_new(16, 0, 16, 0, 16, 0);

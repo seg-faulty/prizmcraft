@@ -11,4 +11,6 @@ void image_add_image(int x, int y, const bopti_image_t *from, bopti_image_t *to,
 
 bopti_image_t * image_transform(const bopti_image_t *src, const mat3x3 trans);
 
+void image_fill_opacity(bopti_image_t *img, int value, float opacity);
+
 #endif
