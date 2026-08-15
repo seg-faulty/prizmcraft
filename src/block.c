@@ -21,21 +21,45 @@ Block block_new(int t_x, int t_y, int f_x, int f_y, int s_x, int s_y) {
 
     Block block;
 
-    block.top = image_transform(&top_flat, block_transformation_matrix);
-    block.front = image_alloc(BLOCK_SIZE, BLOCK_SIZE + 7, IMAGE_RGB565A);
-    block.side = image_alloc(BLOCK_SIZE, BLOCK_SIZE + 7, IMAGE_RGB565A);
-    image_fill(block.front, image_alpha(IMAGE_RGB565A));
-    image_fill(block.side, image_alpha(IMAGE_RGB565A));
+    bopti_image_t *top = image_transform(&top_flat, block_transformation_matrix);
+    bopti_image_t *front = image_alloc(BLOCK_SIZE, BLOCK_SIZE + 7, IMAGE_RGB565A);
+    bopti_image_t *side = image_alloc(BLOCK_SIZE, BLOCK_SIZE + 7, IMAGE_RGB565A);
+
+    image_fill(front, image_alpha(IMAGE_RGB565A));
+    image_fill(side, image_alpha(IMAGE_RGB565A));
 
     for (int x = 0; x < BLOCK_SIZE; x++) {
         for (int y = 0; y < BLOCK_SIZE; y++) {
             color_t front_pixel = image_get_pixel(&front_flat, x, y);
-            image_set_pixel(block.front, x, y + (x / 2), front_pixel);
+            image_set_pixel(front, x, y + (x / 2), front_pixel);
 
             color_t side_pixel = image_get_pixel(&side_flat, x, y);
-            image_set_pixel(block.side, x, (block.side->height - BLOCK_SIZE) + y - (x / 2), side_pixel);
+            image_set_pixel(side, x, (side->height - BLOCK_SIZE) + y - (x / 2), side_pixel);
         }
     }
+
+    block.item = image_alloc(32, 32, IMAGE_RGB565A);
+    image_fill(block.item, image_alpha(IMAGE_RGB565A));
+    image_add_image(0, 0, top, block.item, 1);
+    image_add_image(0, top->height / 2, front, block.item, 1);
+    image_add_image(front->width, top->height / 2, side, block.item, 1);
+
+	struct image_linear_map map_top;
+	image_scale(top, BLOCK_SCALE*65536, BLOCK_SCALE*65536, &map_top);
+
+	struct image_linear_map map_front;
+	image_scale(front, BLOCK_SCALE*65536, BLOCK_SCALE*65536, &map_front);
+
+	struct image_linear_map map_side;
+	image_scale(side, BLOCK_SCALE*65536, BLOCK_SCALE*65536, &map_side);
+
+    block.top = image_linear_alloc(top, &map_top);
+    block.front = image_linear_alloc(front, &map_front);
+    block.side = image_linear_alloc(side, &map_side);
+
+    image_free(top);
+    image_free(front);
+    image_free(side);
 
     return block;
 
@@ -57,25 +81,23 @@ void block_draw(Block block, int x, int y, int z) {
     if (real_y + BLOCK_SCALE*block.front->height < 0 || real_y - BLOCK_SCALE*block.top->height > DHEIGHT) { return; }
 
     if (((z > 0) ? block_is_transparent(world[y][z-1][x]) : true)) {
-        dimage_scale(real_x, real_y, BLOCK_SCALE, block.front);
+        dimage(real_x, real_y, block.front);
     }
 
     if (((x > 0) ? block_is_transparent(world[y][z][x-1]) : true)) {
-        dimage_scale(real_x+block.front->width*BLOCK_SCALE, real_y, BLOCK_SCALE, block.side);
+        dimage(real_x+block.front->width, real_y, block.side);
     }
 
     if (((y < WORLD_HEIGHT-1) ? block_is_transparent(world[y+1][z][x]) : true)) {
-        dimage_scale(real_x, real_y-0.5*BLOCK_SCALE*block.top->height, BLOCK_SCALE, block.top);
+        dimage(real_x, real_y-0.5*block.top->height, block.top);
     }
 }
 
 void block_draw_selected(Block block) {
-    int start_x = DWIDTH - block.front->width - block.side->width - 3;
-    int start_y = 11;
-    
-    dimage_scale(start_x, start_y, 1.0f, block.front);
-    dimage_scale(start_x+block.front->width, start_y, 1.0f, block.side);
-    dimage_scale(start_x, start_y-0.5*block.top->height, 1.0f, block.top);
+    int start_x = DWIDTH - block.item->width - 5;
+    int start_y = 5;
+
+    dimage(start_x, start_y, block.item);
 }
 
 bool block_is_transparent(int block) {
